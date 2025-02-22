@@ -29,11 +29,17 @@ M.paste_img = function(opts)
     utils.create_dir(conf.img_dir)
     paste_img_to(path)
 
+    -- 🔥 affix のデバッグ: conf.affix の型を確認
+    vim.notify("DEBUG: conf.affix type -> " .. type(conf.affix), vim.log.levels.INFO)
+
     -- 🔥 affix が関数の場合、評価する
     local affix_value = conf.affix
     if type(conf.affix) == "function" then
       affix_value = conf.affix(path)
     end
+
+    -- 🔥 affix_value の値をログに出力
+    vim.notify("DEBUG: affix_value -> " .. affix_value, vim.log.levels.INFO)
 
     utils.insert_txt(affix_value, path_txt)
 
