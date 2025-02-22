@@ -29,7 +29,13 @@ M.paste_img = function(opts)
     utils.create_dir(conf.img_dir)
     paste_img_to(path)
 
-    utils.insert_txt(conf.affix, path_txt)
+    -- 🔥 affix が関数の場合、評価する
+    local affix_value = conf.affix
+    if type(conf.affix) == "function" then
+      affix_value = conf.affix(path)
+    end
+
+    utils.insert_txt(affix_value, path_txt)
 
     if type(conf.img_handler) == "function" then
       conf.img_handler {
