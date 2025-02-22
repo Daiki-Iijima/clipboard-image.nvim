@@ -23,19 +23,27 @@ M.paste_img = function(opts)
     conf_toload = conf_utils.merge_config(conf_toload, opts)
 
     local conf = conf_utils.load_config(conf_toload)
+
+    -- paste.lua
     local path = utils.get_img_path(conf.img_dir, conf.img_name)
-    local path_txt = utils.get_img_path(conf.img_dir_txt, conf.img_name, "txt")
+    -- local path_txt = utils.get_img_path(conf.img_dir_txt, conf.img_name, "txt")
+    local path_txt = (conf.img_dir_txt or "") .. conf.img_name .. ".txt"
 
     utils.create_dir(conf.img_dir)
     paste_img_to(path)
 
-    -- **🔥 `affix` が関数なら評価して使用**
+    -- 🔥 affix が関数の場合、評価する
     local affix_value = conf.affix
     if type(conf.affix) == "function" then
-      affix_value = conf.affix(path)
-    elseif type(conf.affix) == "string" then
-      affix_value = string.format(conf.affix, path)
+      if path == nil or path == "" then
+        vim.notify("ERROR: filepath is nil or empty in affix!", vim.log.levels.ERROR)
+        affix_value = "![](ERROR_PATH)"
+      else
+        affix_value = conf.affix(path) -- 🔥 ここで `nil` にならないかチェック
+      end
     end
+
+    vim.notify("DEBUG: affix_value -> " .. affix_value, vim.log.levels.INFO)
 
     -- **🔥 affix のデバッグ出力**
     vim.notify("DEBUG: affix_value -> " .. affix_value, vim.log.levels.INFO)

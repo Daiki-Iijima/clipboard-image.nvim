@@ -7,9 +7,8 @@ M.get_os = function()
     return "Windows"
   end
 
-  local this_os =  tostring(io.popen("uname"):read())
-  if this_os == "Linux" and
-      vim.fn.readfile("/proc/version")[1]:lower():match "microsoft" then
+  local this_os = tostring(io.popen("uname"):read())
+  if this_os == "Linux" and vim.fn.readfile("/proc/version")[1]:lower():match "microsoft" then
     this_os = "Wsl"
   end
   return this_os
@@ -99,19 +98,24 @@ end
 ---@param is_txt? '"txt"'
 ---@return string img_path
 M.get_img_path = function(dir, img_name, is_txt)
-  local this_os = M.get_os()
-  local img = img_name .. ".png"
+  if img_name == nil or img_name == "" then
+    vim.notify("ERROR: img_name is nil or empty!", vim.log.levels.ERROR)
+    return "ERROR_PATH"
+  end
 
-  ---On cwd
+  -- local ext = vim.fn.input("拡張子を入力 (png, jpg, gif): ", "png") -- 🔥 ユーザーに拡張子を入力させる
+  -- if ext == nil or ext == "" then
+  --   ext = "png" -- 🔥 デフォルトで png にする
+  -- end
+  local ext = "png"
+
+  local img = img_name .. "." .. ext -- 🔥 修正: 拡張子を明示的に追加
+
   if dir == "" or dir == nil then
     return img
   end
 
-  if this_os == "Windows" and is_txt ~= "txt" then
-    dir = M.resolve_dir(dir, "\\")
-  else
-    dir = M.resolve_dir(dir)
-  end
+  dir = M.resolve_dir(dir)
   return dir .. img
 end
 

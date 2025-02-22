@@ -70,7 +70,7 @@ end
 ---@return table loaded_config
 M.load_config = function(config_toload)
   return {
-    affix = M.load_opt(config_toload.affix),
+    affix = config_toload.affix, -- affix はそのままの関数（もしくは文字列）として保持する
     img_name = M.load_opt(config_toload.img_name),
     img_dir = M.load_opt(config_toload.img_dir),
     img_dir_txt = M.load_opt(config_toload.img_dir_txt),
