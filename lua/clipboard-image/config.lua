@@ -27,7 +27,16 @@ end
 ---@param new_opts table
 ---@return table config
 M.merge_config = function(old_opts, new_opts)
-  return vim.tbl_deep_extend("force", old_opts, new_opts or {})
+  local merged = vim.tbl_deep_extend("force", old_opts, new_opts or {})
+
+  -- **🔥 affix の型を保持**
+  if type(old_opts.affix) == "function" and type(new_opts.affix) ~= "function" then
+    merged.affix = old_opts.affix
+  elseif type(new_opts.affix) == "function" then
+    merged.affix = new_opts.affix
+  end
+
+  return merged
 end
 
 ---TODO: Need better name and description
